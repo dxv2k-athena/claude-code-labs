@@ -43,24 +43,27 @@ function calculateRank(totalPoints) {
 
 function getLeaderboard(players, limit = 100) {
   return players
-    .filter((p) => p.totalGames > 0 || p.points > 0)
+    .filter((p) => (p.wins + p.losses + p.draws) > 0 || p.points > 0)
     .sort((a, b) => b.points - a.points)
     .slice(0, limit)
-    .map((p, index) => ({
-      position: index + 1,
-      username: p.username,
-      displayName: p.displayName,
-      points: p.points,
-      rank: p.rank,
-      wins: p.wins,
-      winRate: p.winRate,
-      streak: p.currentStreak
-    }))
+    .map((p, index) => {
+      const totalGames = p.wins + p.losses + p.draws
+      const winRate = totalGames === 0 ? 0 : Math.round((p.wins / totalGames) * 100)
+      return {
+        position: index + 1,
+        username: p.username,
+        displayName: p.displayName,
+        points: p.points,
+        rank: p.rank,
+        wins: p.wins,
+        winRate,
+        streak: p.currentStreak
+      }
+    })
 }
 
-// BUG: doesn't handle negative points (player points should never go below 0)
 function applyPoints(player, points) {
-  player.points += points
+  player.points = Math.max(0, player.points + points)
   player.rank = calculateRank(player.points)
   player.lastActiveAt = new Date().toISOString()
   return player

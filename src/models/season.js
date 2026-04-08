@@ -14,9 +14,8 @@ class Season {
     this.endDate = new Date().toISOString()
   }
 
-  // BUG: doesn't check if season is already ended
   isActive() {
-    return this.active
+    return this.active && this.endDate === null
   }
 }
 

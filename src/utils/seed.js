@@ -34,7 +34,7 @@ function seedDatabase() {
 
   // Simulate some matches
   let matchCount = 0
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 300; i++) {
     const p1 = players[Math.floor(Math.random() * players.length)]
     const p2 = players[Math.floor(Math.random() * players.length)]
     if (p1.id === p2.id) continue

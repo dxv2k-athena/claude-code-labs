@@ -20,8 +20,8 @@ class Player {
     return this.wins + this.losses + this.draws
   }
 
-  // BUG: winRate returns NaN when totalGames is 0
   get winRate() {
+    if (this.totalGames === 0) return 0
     return Math.round((this.wins / this.totalGames) * 100)
   }
 
