@@ -9,19 +9,15 @@ const { getAchievementSummary } = require('../services/achievements')
 router.get('/', (req, res) => {
   const players = loadCollection('players')
   res.json(
-    players.map((p) =>
-      new Player(p.username, p.displayName).toPublic
-        ? {
-            id: p.id,
-            username: p.username,
-            displayName: p.displayName,
-            points: p.points,
-            rank: p.rank,
-            wins: p.wins,
-            losses: p.losses
-          }
-        : p
-    )
+    players.map((p) => ({
+      id: p.id,
+      username: p.username,
+      displayName: p.displayName,
+      points: p.points,
+      rank: p.rank,
+      wins: p.wins,
+      losses: p.losses
+    }))
   )
 })
 
@@ -59,7 +55,7 @@ router.post('/', validateUsername, (req, res) => {
 // GET /api/players/:id/matches
 router.get('/:id/matches', (req, res) => {
   const { getMatchHistory } = require('../services/matchmaking')
-  const limit = parseInt(req.query.limit) || 20
+  const limit = parseInt(req.query.limit, 10) || 20
   const matches = getMatchHistory(req.params.id, limit)
   res.json(matches)
 })

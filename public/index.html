@@ -42,6 +42,15 @@
   </table>
 
   <script>
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+    }
+
     fetch('/api/leaderboard')
       .then(r => r.json())
       .then(data => {
@@ -56,18 +65,20 @@
         }
 
         data.forEach(p => {
-          const rankClass = 'rank-' + p.rank.toLowerCase()
-          tbody.innerHTML += `
-            <tr>
-              <td>${p.position}</td>
-              <td>${p.displayName}</td>
-              <td class="rank ${rankClass}">${p.rank}</td>
-              <td>${p.points}</td>
-              <td>${p.wins}</td>
-              <td>${p.winRate}%</td>
-              <td class="streak">${p.streak > 0 ? '🔥' + p.streak : '-'}</td>
-            </tr>
+          const allowedRanks = ['bronze', 'silver', 'gold', 'platinum', 'diamond', 'master']
+          const rankLower = String(p.rank).toLowerCase()
+          const rankClass = allowedRanks.includes(rankLower) ? 'rank-' + rankLower : 'rank-bronze'
+          const row = document.createElement('tr')
+          row.innerHTML = `
+            <td>${escapeHtml(p.position)}</td>
+            <td>${escapeHtml(p.displayName)}</td>
+            <td class="rank ${rankClass}">${escapeHtml(p.rank)}</td>
+            <td>${escapeHtml(p.points)}</td>
+            <td>${escapeHtml(p.wins)}</td>
+            <td>${escapeHtml(p.winRate)}%</td>
+            <td class="streak">${p.streak > 0 ? '🔥' + escapeHtml(p.streak) : '-'}</td>
           `
+          tbody.appendChild(row)
         })
       })
       .catch(err => {
